@@ -90,12 +90,7 @@ public class DistributedTableModel implements TableModel {
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		if(rowIndex <= 100){
-			return tableClientCache.retrieveRowFromCache(rowIndex)[columnIndex];
-		}
-		else flag = false;
-		
-		return null;
+		return tableClientCache.retrieveRowFromCache(rowIndex)[columnIndex];
 	}
 
 
