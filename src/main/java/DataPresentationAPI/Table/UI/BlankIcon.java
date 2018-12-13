@@ -1,4 +1,3 @@
-/* (swing1.1) */
 
 package DataPresentationAPI.Table.UI;
 

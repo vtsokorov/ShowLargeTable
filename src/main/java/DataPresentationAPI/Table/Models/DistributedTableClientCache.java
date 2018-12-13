@@ -1,11 +1,7 @@
 
 package DataPresentationAPI.Table.Models;
 
-/**
- * Class that is responsible for retrieving the data for the table from
- * the server and storing it locally. 
- * @author Jeremy Dickson, 2003.
- */
+
 
 public class DistributedTableClientCache {
     

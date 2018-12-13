@@ -4,16 +4,7 @@ package DataPresentationAPI.Table.Models;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-/**
- * Specialized TableModel that retrieves its data only when it
- * is required. It retrieves the data in blocks of <i>n</i> rows and
- * holds a maximum of <i>m</i> rows before overwriting previous rows.
- * These parameters can be defined in the constructor.
- * This class retrieves its data from an object that implements the 
- * interface <code>DistributedTableDataSource</code> that is also 
- * defined in the constructor.
- * @author Jeremy Dickson, 2003.
- */
+
 public class DistributedTableModel implements TableModel {
 
 	//Used to retrieve table data
