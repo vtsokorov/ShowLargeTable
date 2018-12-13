@@ -143,22 +143,9 @@ public class MainWindow extends JFrame {
 	
 		scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener(){ 
 		    @Override
-		    public void adjustmentValueChanged(AdjustmentEvent e) {
-		        // Check if user has done dragging the scroll bar
-		    	if(!e.getValueIsAdjusting()){
-		            JScrollBar scrollBar = (JScrollBar) e.getAdjustable();
-		            int extent = scrollBar.getModel().getExtent();
-		            int maximum = scrollBar.getModel().getMaximum();
-		            System.out.println("------------------------------");
-		            System.out.println("extent: "+String.format("%d", extent));
-		            System.out.println("maximum: "+String.format("%d", maximum));
-		            System.out.println("e.getValue(): "+String.format("%d", e.getValue()));
-		            System.out.println("------------------------------");
-		            if(extent + e.getValue() == 100) {
-		                //fetchMoreData();
-		            }
-		        }
-		
+		    public void adjustmentValueChanged(AdjustmentEvent e) 
+		    {
+		    	if(!e.getValueIsAdjusting()) table.repaint();
 		    }
 		});
 
@@ -218,6 +205,7 @@ public class MainWindow extends JFrame {
 		
 		table.getTableHeader().addMouseListener(new HeaderListener(table, renderer));
 		table.getSelectionModel().addListSelectionListener(new SelectionListener(table));
+		scrollPane.getVerticalScrollBar().addAdjustmentListener((AdjustmentListener)model);
 	}
 	
 	private void connection(ActionEvent arg0)
@@ -252,7 +240,7 @@ public class MainWindow extends JFrame {
                 {
                 	showWarningMsg("CONNECTION OK!!!"); 
 					try {
-						DataSourceService dataSource = new DataSourceService<ExTableService>(new ExTableService());
+						DataSourceService dataSource = new DataSourceService<BigTableService>(new BigTableService());
 						TableModel m = new DistributedTableModel(dataSource, 100, 500);
 						tableInit(m);
 						labelStatus.setText("Row count: "+String.valueOf(m.getRowCount()));

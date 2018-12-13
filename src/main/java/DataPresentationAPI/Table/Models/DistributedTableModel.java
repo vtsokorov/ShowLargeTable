@@ -1,11 +1,16 @@
 
 package DataPresentationAPI.Table.Models;
 
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+
+import javax.swing.JScrollBar;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 
-public class DistributedTableModel implements TableModel {
+public class DistributedTableModel implements TableModel, AdjustmentListener {
 
 	//Used to retrieve table data
 	private DistributedTableDataSource tableDataSource;
@@ -81,8 +86,21 @@ public class DistributedTableModel implements TableModel {
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		return tableClientCache.retrieveRowFromCache(rowIndex)[columnIndex];
+		Object[] arr = tableClientCache.retrieveRowFromCache(flag, rowIndex);
+		if(arr != null){
+			return arr[columnIndex];
+		}
+		
+		return null;
 	}
+	
+
+    @Override
+    public void adjustmentValueChanged(AdjustmentEvent e) 
+    {
+        // Check if user has done dragging the scroll bar
+    	flag = !e.getValueIsAdjusting() ? true : false;
+    }
 
 
 	/**
