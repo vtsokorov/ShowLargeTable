@@ -28,7 +28,7 @@ public class BigTable implements Serializable
     @Column(name = "VALUE_ROW", nullable = true, insertable = true, updatable = true)        
     private BigDecimal value;
     
-    @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "parent")
+    @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY, cascade=CascadeType.ALL, mappedBy = "parent")
     private Set<ExTable> exTableRecords = new HashSet<ExTable>(0);
   
      

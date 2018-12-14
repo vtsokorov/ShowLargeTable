@@ -27,7 +27,8 @@ import DataPresentationAPI.Table.Models.DAOInterface;
 public class BigTableService implements DAOInterface<BigTable> 
 {
     private Session session  = null;
-    private String sortColumn;
+    private String sortColumnName;
+    private Integer sortIndexColumn;
     private boolean ascending;
     
     public BigTableService()
@@ -35,7 +36,8 @@ public class BigTableService implements DAOInterface<BigTable>
         SessionFactory sf = HibernateUtil.getSessionFactory();
         if(sf != null) {
             session = sf.openSession();
-            sortColumn = "id";
+            sortIndexColumn = 0;
+            sortColumnName = this.getFieldsNameAt(sortIndexColumn);
             ascending  = true;
         }
     }
@@ -80,9 +82,9 @@ public class BigTableService implements DAOInterface<BigTable>
     	CriteriaQuery<BigTable> q = builder.createQuery(BigTable.class);
     	Root<BigTable> bigtable = q.from(BigTable.class);
     	if(ascending == true)
-    		q.select(bigtable).orderBy(builder.asc(bigtable.get(sortColumn)));
+    		q.select(bigtable).orderBy(builder.asc(bigtable.get(sortColumnName)));
     	else
-    		q.select(bigtable).orderBy(builder.desc(bigtable.get(sortColumn)));
+    		q.select(bigtable).orderBy(builder.desc(bigtable.get(sortColumnName)));
     	Query<BigTable> query = session.createQuery(q);
     	return query.setFirstResult(skip).setMaxResults(maxshow).getResultList();
     	//return session.createQuery("from BigTable as bt order by 1 desc").setFirstResult(skip).setMaxResults(maxshow).list();  
@@ -94,9 +96,9 @@ public class BigTableService implements DAOInterface<BigTable>
     	CriteriaQuery<BigTable> q = builder.createQuery(BigTable.class);
     	Root<BigTable> bigtable = q.from(BigTable.class);
     	if(ascending == true)
-    		q.select(bigtable).orderBy(builder.asc(bigtable.get(sortColumn)));
+    		q.select(bigtable).orderBy(builder.asc(bigtable.get(sortColumnName)));
     	else
-    		q.select(bigtable).orderBy(builder.desc(bigtable.get(sortColumn)));
+    		q.select(bigtable).orderBy(builder.desc(bigtable.get(sortColumnName)));
     	Query<BigTable> query = session.createQuery(q);
     	List<BigTable> rows = query.setFirstResult(skip).setMaxResults(maxshow).getResultList();
 
@@ -182,7 +184,8 @@ public class BigTableService implements DAOInterface<BigTable>
     
     public void setOrderParameters(Integer indexColumn, boolean ascending)
     {
-    	this.sortColumn = this.getFieldsNameAt(indexColumn-1);
+    	this.sortIndexColumn = indexColumn;
+    	this.sortColumnName = this.getFieldsNameAt(sortIndexColumn);
     	this.ascending  = ascending;
     }
 

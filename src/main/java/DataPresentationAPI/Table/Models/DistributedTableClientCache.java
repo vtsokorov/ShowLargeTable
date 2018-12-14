@@ -91,12 +91,9 @@ public class DistributedTableClientCache {
      * object.
      *@param rowIndex The row index in the table that is to be retrieved.
      */
-    public Object[] retrieveRowFromCache(boolean flag, int rowIndex) {
-        if(flag) {
-	    	ensureRowCached(rowIndex);
-	        return (Object[])data[getIndexOfRowInCache(rowIndex)];
-        }
-        return null;
+    public Object[] retrieveRowFromCache(int rowIndex) {
+	    ensureRowCached(rowIndex);
+	    return (Object[])data[getIndexOfRowInCache(rowIndex)];
     }
     
     

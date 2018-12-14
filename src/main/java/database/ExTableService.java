@@ -3,10 +3,7 @@ package database;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
@@ -18,6 +15,7 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.query.Query;
@@ -26,6 +24,7 @@ import DataPresentationAPI.Table.Models.DAOInterface;
 
 public class ExTableService implements DAOInterface<ExTable>
 {
+	private SessionFactory sf;
     private Session session = null;
     private String sortColumnName;
     private Integer sortIndexColumn;
@@ -33,7 +32,7 @@ public class ExTableService implements DAOInterface<ExTable>
     
     public ExTableService()
     {
-        SessionFactory sf = HibernateUtil.getSessionFactory();
+        sf = HibernateUtil.getSessionFactory();
         if(sf != null) {
             session = sf.openSession();
             sortIndexColumn = 0;
@@ -69,7 +68,7 @@ public class ExTableService implements DAOInterface<ExTable>
     
 
     public ExTable findById(Integer id) throws SQLException, Exception {
-        return session.get(ExTable.class, id);
+    	return (ExTable)session.load(ExTable.class, id);
     }
 
 
@@ -78,15 +77,25 @@ public class ExTableService implements DAOInterface<ExTable>
     }
     
     public List<ExTable> findAll(Integer skip, Integer maxshow) throws SQLException, Exception {   
+
     	CriteriaBuilder builder = session.getCriteriaBuilder();
-    	CriteriaQuery<ExTable> q = builder.createQuery(ExTable.class);
-    	Root<ExTable> bigtable = q.from(ExTable.class);
-    	if(ascending == true)
-    		q.select(bigtable).orderBy(builder.asc(bigtable.get(sortColumnName)));
-    	else
-    		q.select(bigtable).orderBy(builder.desc(bigtable.get(sortColumnName)));
-    	Query<ExTable> query = session.createQuery(q);
-    	return query.setFirstResult(skip).setMaxResults(maxshow).getResultList();
+    	CriteriaQuery<ExTable> criteria = builder.createQuery(ExTable.class);
+    	Root<ExTable> extable = criteria.from(ExTable.class);
+    	
+    	Fetch<ExTable, BigTable> fetch = extable.fetch(ExTable.getFieldsNameAt(1), JoinType.INNER);
+
+    	Expression<?> x = sortIndexColumn == 1 ? extable.join(ExTable.getFieldsNameAt(1))
+    							.get(BigTable.getFieldsNameAt(2))
+    			: extable.get(ExTable.getFieldsNameAt(sortIndexColumn));
+    	
+	    if(ascending == true)
+	    	criteria.select(extable).orderBy(builder.asc(x));
+	    else
+	    	criteria.select(extable).orderBy(builder.desc(x));
+
+    	Query<ExTable> query = session.createQuery(criteria).setFirstResult(skip).setMaxResults(maxshow);
+
+    	return query.getResultList();
     	//return session.createQuery("from BigTable as bt order by 1 desc").setFirstResult(skip).setMaxResults(maxshow).list();  
     }
     
@@ -96,10 +105,10 @@ public class ExTableService implements DAOInterface<ExTable>
     	CriteriaQuery<ExTable> criteria = builder.createQuery(ExTable.class);
     	Root<ExTable> extable = criteria.from(ExTable.class);
     	
-    	Fetch<ExTable, BigTable> fetch = extable.fetch(ExTable.getFieldsNameAt(1), JoinType.LEFT);
-    	Join<ExTable, BigTable> join = extable.join(ExTable.getFieldsNameAt(1));
-    	
-    	Expression<?> x = sortIndexColumn == 1 ? join.get(BigTable.getFieldsNameAt(2)) 
+    	Fetch<ExTable, BigTable> fetch = extable.fetch(ExTable.getFieldsNameAt(1), JoinType.INNER);
+
+    	Expression<?> x = sortIndexColumn == 1 ? extable.join(ExTable.getFieldsNameAt(1))
+    							.get(BigTable.getFieldsNameAt(2))
     			: extable.get(ExTable.getFieldsNameAt(sortIndexColumn));
     	
 	    if(ascending == true)

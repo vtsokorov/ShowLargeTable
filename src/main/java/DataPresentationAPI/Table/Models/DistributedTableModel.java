@@ -1,16 +1,11 @@
 
 package DataPresentationAPI.Table.Models;
-
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-
-import javax.swing.JScrollBar;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
+import DataPresentationAPI.Table.Listeners.ScrollListener;
 
 
-public class DistributedTableModel implements TableModel, AdjustmentListener {
+public class DistributedTableModel implements TableModel {
 
 	//Used to retrieve table data
 	private DistributedTableDataSource tableDataSource;
@@ -21,7 +16,7 @@ public class DistributedTableModel implements TableModel, AdjustmentListener {
 	//Contains the descriptive elements of the table
 	private DistributedTableDescription tableDescription;
 	
-	private boolean flag = true;
+	private boolean scrollFlag = true;
 
 
 	/**
@@ -85,24 +80,14 @@ public class DistributedTableModel implements TableModel, AdjustmentListener {
 	/**
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
-	public Object getValueAt(int rowIndex, int columnIndex) {
-		Object[] arr = tableClientCache.retrieveRowFromCache(flag, rowIndex);
-		if(arr != null){
-			return arr[columnIndex];
-		}
-		
-		return null;
+	public Object getValueAt(int rowIndex, int columnIndex)
+    {
+		if(ScrollListener.isScrollStop())
+			return tableClientCache.retrieveRowFromCache(rowIndex)[columnIndex];
+		else 
+			return null;
 	}
 	
-
-    @Override
-    public void adjustmentValueChanged(AdjustmentEvent e) 
-    {
-        // Check if user has done dragging the scroll bar
-    	flag = !e.getValueIsAdjusting() ? true : false;
-    }
-
-
 	/**
 	 * @see javax.swing.table.TableModel#isCellEditable(int, int)
 	 */

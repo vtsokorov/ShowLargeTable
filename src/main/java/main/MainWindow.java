@@ -22,9 +22,11 @@ import DataPresentationAPI.Table.Models.DistributedTableModel;
 import DataPresentationAPI.Table.UI.SortButtonRenderer;
 import DataPresentationAPI.Table.Listeners.SelectionListener;
 import DataPresentationAPI.Table.Listeners.HeaderListener;
+import DataPresentationAPI.Table.Listeners.ScrollListener;
 import database.FbProperty;
 import database.HibernateUtil;
 import database.BigTableService;
+import database.ExTable;
 import database.ExTableService;
 
 import javax.swing.JMenuBar;
@@ -141,16 +143,6 @@ public class MainWindow extends JFrame {
 		table = new JTable();
 		scrollPane.setViewportView(table);
 	
-		scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener(){ 
-		    @Override
-		    public void adjustmentValueChanged(AdjustmentEvent e) 
-		    {
-		    	if(!e.getValueIsAdjusting()) table.repaint();
-		    }
-		});
-
-
-
 		
 //		scrollPane.getViewport().addMouseWheelListener(new MouseWheelListener() 
 //		{
@@ -185,7 +177,20 @@ public class MainWindow extends JFrame {
 		        JTable target = (JTable)mouseEvent.getSource();
 		        int row = target.getSelectedRow();
 		        if (mouseEvent.getClickCount() == 2 && row != -1) {
-		        	showWarningMsg("addMouseListener");
+		        	Integer id = Integer.valueOf(table.getModel().getValueAt(row, 0).toString());
+		        	ExTableService service = new ExTableService();
+					try {
+						ExTable selectRow = service.findById(id);
+			        	String data = new String();
+			        	data += String.valueOf(selectRow.getId()) + "\n";
+			        	data += selectRow.getParent().getNameRow() + "\n";
+			        	data += selectRow.getNameRow() + "\n";
+			        	showWarningMsg(data);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
 		        }
 		    }
 		});	
@@ -205,7 +210,7 @@ public class MainWindow extends JFrame {
 		
 		table.getTableHeader().addMouseListener(new HeaderListener(table, renderer));
 		table.getSelectionModel().addListSelectionListener(new SelectionListener(table));
-		scrollPane.getVerticalScrollBar().addAdjustmentListener((AdjustmentListener)model);
+		scrollPane.getVerticalScrollBar().addAdjustmentListener(new ScrollListener(table));
 	}
 	
 	private void connection(ActionEvent arg0)
@@ -240,7 +245,7 @@ public class MainWindow extends JFrame {
                 {
                 	showWarningMsg("CONNECTION OK!!!"); 
 					try {
-						DataSourceService dataSource = new DataSourceService<BigTableService>(new BigTableService());
+						DataSourceService dataSource = new DataSourceService<ExTableService>(new ExTableService());
 						TableModel m = new DistributedTableModel(dataSource, 100, 500);
 						tableInit(m);
 						labelStatus.setText("Row count: "+String.valueOf(m.getRowCount()));
