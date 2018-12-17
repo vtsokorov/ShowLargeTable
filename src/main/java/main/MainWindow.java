@@ -17,7 +17,7 @@ import javax.swing.table.TableModel;
 
 import org.hibernate.HibernateException;
 
-import DataPresentationAPI.Table.Models.DataSourceService;
+import DataPresentationAPI.Table.Models.DefaultDataSourceService;
 import DataPresentationAPI.Table.Models.DistributedTableModel;
 import DataPresentationAPI.Table.UI.SortButtonRenderer;
 import DataPresentationAPI.Table.Listeners.SelectionListener;
@@ -245,8 +245,9 @@ public class MainWindow extends JFrame {
                 {
                 	showWarningMsg("CONNECTION OK!!!"); 
 					try {
-						DataSourceService dataSource = new DataSourceService<ExTableService>(new ExTableService());
-						TableModel m = new DistributedTableModel(dataSource, 100, 500);
+						
+						DistributedTableModel m = new DistributedTableModel();
+						m.setDataSource(new ExTableService(), 200, 1000);
 						tableInit(m);
 						labelStatus.setText("Row count: "+String.valueOf(m.getRowCount()));
 					}

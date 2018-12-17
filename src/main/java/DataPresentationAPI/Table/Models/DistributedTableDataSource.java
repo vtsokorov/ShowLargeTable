@@ -53,4 +53,8 @@ public interface DistributedTableDataSource {
 	 * @throws Exception If something goes wrong.
 	 */
 	int[] getSelectedColumns() throws Exception;
+	
+	
+	
+	DAOInterface<?> getDAOService();
 }

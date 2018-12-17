@@ -51,18 +51,18 @@ public class FbProperty
 
     public boolean readPropertyFromFile(String filename) throws IOException
     {
-        Properties pf = new Properties();
-        InputStream in = Files.newInputStream(Paths.get(filename));
-        pf.load(in);
-
-        path     = pf.getProperty("PATH");
-        host     = pf.getProperty("HOST");
-        port     = Integer.valueOf(pf.getProperty("PORT"));
-        encoding = pf.getProperty("ENCODING");
-        username = pf.getProperty("USERNAME");
-        roleName = pf.getProperty("ROLE");
-                   
-        return !pf.isEmpty();
+    	if(Files.exists(Paths.get(filename))) { 
+        	IniFile file = new IniFile(filename);
+            path     = file.getString("MAIN", "PATH", Paths.get("").toAbsolutePath().toString().concat("\\DBTEST.FDB"))
+            		       .replaceAll("\\\\", "/");
+            host     = file.getString("MAIN", "HOST", "localhost");
+            port     = file.getInt("MAIN", "PORT", 3050);
+            encoding = file.getString("MAIN", "ENCODING", "WIN1251");
+            username = file.getString("MAIN", "USERNAME", "SYSDBA");
+            roleName = file.getString("MAIN", "ROLE", "RDB$ADMIN");
+            return true;
+    	}            
+        return false;
     }
     
     public void showProperty()
