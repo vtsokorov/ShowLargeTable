@@ -6,8 +6,6 @@ import java.time.LocalDate;
 
 import javax.persistence.*;
 
-import DataPresentationAPI.Table.Models.CellInterface;
-
 
 @Entity
 @Table (name = "EXTABLE", uniqueConstraints = {@UniqueConstraint(columnNames = "ID")})
