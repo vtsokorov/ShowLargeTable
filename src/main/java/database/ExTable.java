@@ -11,7 +11,7 @@ import DataPresentationAPI.Table.Models.CellInterface;
 
 @Entity
 @Table (name = "EXTABLE", uniqueConstraints = {@UniqueConstraint(columnNames = "ID")})
-public class ExTable implements Serializable, CellInterface  {
+public class ExTable implements Serializable {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -97,22 +97,4 @@ public class ExTable implements Serializable, CellInterface  {
     {
         return fieldsName[indexColumn];
     }
-
-	@Override
-	public void set(Integer columnIndex, Object data) {
-		switch(columnIndex)
-		{
-			case 0: {this.setId((Integer)data); break;}
-		    case 1: break;
-		    case 2: {this.setNameRow((String)data); break;}
-		}
-		
-	}
-
-	@Override
-	public Object get(Integer columnIndex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-   
 }

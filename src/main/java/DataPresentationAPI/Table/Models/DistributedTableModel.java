@@ -28,8 +28,6 @@ public class DistributedTableModel implements TableModel, Serializable
 	
 	protected EventListenerList listenerList = new EventListenerList();
 	
-	private boolean scrollFlag = true;
-	
 	private boolean cellEditable = true;
 
 
@@ -156,17 +154,6 @@ public class DistributedTableModel implements TableModel, Serializable
 	{
 		if(ScrollListener.isScrollStop()) {
 			tableClientCache.retrieveRowFromCache(rowIndex)[columnIndex] = aValue;
-			
-	      	Integer id = Integer.valueOf(getValueAt(rowIndex, 0).toString());
-	      	this.tableDataSource.getDAOService().findById(id);
-//			try {
-//				ExTable selectRow = service.findById(id);
-//	        	String data = new String();
-//	        	data += String.valueOf(selectRow.getId()) + "\n";
-//	        	data += selectRow.getParent().getNameRow() + "\n";
-//	        	data += selectRow.getNameRow() + "\n";
-			
-			
 			fireTableCellUpdated(rowIndex, columnIndex);
 		}
 
